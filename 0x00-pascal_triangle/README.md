@@ -1,1 +1,1 @@
-# Mock Technical Interview
+# Pascal's Triangle.
