@@ -18,15 +18,15 @@ def minOperations(n):
            characters in the file.
       Returns 0 if n is impossible to achieve.
     """
-    if n == 0:
+    if n <= 1:
         return 0
 
-    dp = [float('inf')] * (n + 1)
-    dp[1] = 0
+    min_ops = 0
+    factor = 2
+    while n > 1:
+        while n % factor == 0:
+            min_ops += factor
+            n //= factor
+        factor += 1
 
-    for i in range(2, n + 1):
-        for j in range(1, i):
-            if i % j == 0:
-                dp[i] = min(dp[i], dp[j] + i // j)
-
-    return dp[n] if dp[n] != float('inf') else 0
+    return min_ops
