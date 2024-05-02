@@ -34,7 +34,7 @@ def signal_handler(sig, frame):
     Handle keyboard interruption (CTRL + C) by printing statistics.
     """
     print_statistics(total_size, status_counts)
-    sys.exit(0)i
+    sys.exit(0)
 
 
 if __name__ == "__main__":
