@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+"""This script reads stdin line by line and computes metrics."""
 
 import sys
 import signal
@@ -34,6 +35,7 @@ def signal_handler(sig, frame):
     """
     print_statistics(total_size, status_counts)
     sys.exit(0)
+
 
 if __name__ == "__main__":
     total_size = 0
