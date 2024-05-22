@@ -1,5 +1,7 @@
 #!/usr/bin/node
 
+
+
 const request = require('request');
 
 if (process.argv.length !== 3) {
@@ -14,38 +16,28 @@ if (isNaN(movieId)) {
     process.exit(1);
 }
 
-const fetchMovieCharacters = (movieId) => {
-    const url = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
+const movieUrl = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
 
-    request(url, { json: true }, (err, res, body) => {
-        if (err) {
-            console.error(`HTTP Request failed: ${err}`);
-            process.exit(1);
-        }
-        
-        if (res.statusCode !== 200) {
-            console.error(`Failed to fetch data. Status code: ${res.statusCode}`);
-            process.exit(1);
-        }
+request(movieUrl, { json: true }, (err, res, body) => {
+    if (err || res.statusCode !== 200) {
+        console.error(`Failed to fetch data: ${err || `Status code ${res.statusCode}`}`);
+        process.exit(1);
+    }
 
-        const characters = body.characters;
+    const characters = body.characters;
+    const characterNames = Array(characters.length).fill(null);
 
-        characters.forEach((characterUrl) => {
-            request(characterUrl, { json: true }, (err, res, body) => {
-                if (err) {
-                    console.error(`HTTP Request failed: ${err}`);
-                    process.exit(1);
-                }
+    let completedRequests = 0;
 
-                if (res.statusCode !== 200) {
-                    console.error(`Failed to fetch data. Status code: ${res.statusCode}`);
-                    process.exit(1);
-                }
-
-                console.log(body.name);
-            });
+    characters.forEach((url, index) => {
+        request(url, { json: true }, (err, res, body) => {
+            if (!err && res.statusCode === 200) {
+                characterNames[index] = body.name;
+            }
+            completedRequests++;
+            if (completedRequests === characters.length) {
+                characterNames.forEach(name => console.log(name));
+            }
         });
     });
-};
-
-fetchMovieCharacters(movieId);
+});
