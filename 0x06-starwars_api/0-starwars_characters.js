@@ -1,54 +1,41 @@
-#!/usr/bin/python3
-"""
-A script that prints all characters of a Star Wars movie.
-"""
+#!/usr/bin/node
 
-import sys
-import requests
+const request = require('request');
 
+if (process.argv.length !== 3) {
+  console.log('Usage: ./0-starwars_characters.js <Movie ID>');
+  process.exit(1);
+}
 
-def fetch_movie_characters(movie_id):
-    """
-    Fetch and print all characters of a Star Wars movie based on the given Movie ID.
+const movieId = process.argv[2];
 
-    Parameters:
-    - movie_id (str): The ID of the Star Wars movie.
+if (isNaN(movieId)) {
+  console.log('Movie ID must be a number');
+  process.exit(1);
+}
 
-    Returns:
-    - None
-    """
-    try:
-        # Fetch movie details using the provided Movie ID
-        url = f"https://swapi.dev/api/films/{movie_id}/"
-        response = requests.get(url)
-        response.raise_for_status()  # Raise an exception for HTTP errors
+const movieUrl = `https://swapi-api.hbtn.io/api/films/${movieId}/`;
 
-        movie_data = response.json()
-        characters = movie_data.get('characters', [])
+request(movieUrl, { json: true }, (err, res, body) => {
+  if (err || res.statusCode !== 200) {
+    console.error(`Failed to fetch data: ${err || `Status code ${res.statusCode}`}`);
+    process.exit(1);
+  }
 
-        # Fetch and print each character's name
-        for character_url in characters:
-            character_response = requests.get(character_url)
-            character_response.raise_for_status()
-            character_data = character_response.json()
-            print(character_data['name'])
-    
-    except requests.exceptions.RequestException as e:
-        print(f"HTTP Request failed: {e}")
-        sys.exit(1)
-    except ValueError as e:
-        print(f"Failed to parse JSON response: {e}")
-        sys.exit(1)
+  const characters = body.characters;
+  const characterNames = Array(characters.length).fill(null);
 
-if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: nqueens N")
-        sys.exit(1)
-    
-    movie_id = sys.argv[1]
+  let completedRequests = 0;
 
-    if not movie_id.isdigit():
-        print("Movie ID must be a number")
-        sys.exit(1)
-    
-    fetch_movie_characters(movie_id)
+  characters.forEach((url, index) => {
+    request(url, { json: true }, (err, res, body) => {
+      if (!err && res.statusCode === 200) {
+        characterNames[index] = body.name;
+      }
+      completedRequests++;
+      if (completedRequests === characters.length) {
+        characterNames.forEach(name => console.log(name));
+      }
+    });
+  });
+});
