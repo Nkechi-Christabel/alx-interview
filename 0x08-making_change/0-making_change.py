@@ -12,21 +12,22 @@ def makeChange(coins, total):
     Args:
         coins (list of int): List of coin values.
         total (int): The total amount to be met.
-    
+
     Returns:
-        int: Fewest number of coins needed to meet total, or -1 if not possible.
+        int: Fewest number of coins needed to meet total, or -1 if not
+        possible.
     """
     if total <= 0:
         return 0
 
-    # Initialize the dp array with a large number
-    dp = [float('inf')] * (total + 1)
-    dp[0] = 0
-
-    # Loop over each coin and update the dp array
-    for coin in coins:
-        for x in range(coin, total + 1):
-            if dp[x - coin] != float('inf'):
-                dp[x] = min(dp[x], dp[x - coin] + 1)
-
-    return dp[total] if dp[total] != float('inf') else -1
+    else:
+        coin = sorted(coins)
+        coin.reverse()
+        counter = 0
+        for e in coin:
+            while (total >= e):
+                counter += 1
+                total -= e
+        if total == 0:
+            return counter
+        return -1
