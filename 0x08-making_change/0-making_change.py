@@ -8,7 +8,7 @@ given amount total.
 def makeChange(coins, total):
     """
     Determine the fewest number of coins needed to meet a given total.
-    
+
     Args:
         coins (list of int): List of coin values.
         total (int): The total amount to be met.
